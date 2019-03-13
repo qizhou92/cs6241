@@ -1,0 +1,13 @@
+clang -c -o spec.bc -DSPEC_CPU -DNDEBUG    -O2 -fno-strict-aliasing       -DSPEC_CPU_LP64         -c -O3  -S -emit-llvm -fms-compatibility-version=19   spec.c
+clang -c -o blocksort.bc -DSPEC_CPU -DNDEBUG    -O2 -fno-strict-aliasing       -DSPEC_CPU_LP64         -c -O3  -S -emit-llvm -fms-compatibility-version=19   blocksort.c
+clang -c -o bzip2.bc -DSPEC_CPU -DNDEBUG    -O2 -fno-strict-aliasing       -DSPEC_CPU_LP64         -c -O3  -S -emit-llvm -fms-compatibility-version=19   bzip2.c
+clang -c -o bzlib.bc -DSPEC_CPU -DNDEBUG    -O2 -fno-strict-aliasing       -DSPEC_CPU_LP64         -c -O3  -S -emit-llvm -fms-compatibility-version=19   bzlib.c
+clang -c -o compress.bc -DSPEC_CPU -DNDEBUG    -O2 -fno-strict-aliasing       -DSPEC_CPU_LP64         -c -O3  -S -emit-llvm -fms-compatibility-version=19   compress.c
+clang -c -o crctable.bc -DSPEC_CPU -DNDEBUG    -O2 -fno-strict-aliasing       -DSPEC_CPU_LP64         -c -O3  -S -emit-llvm -fms-compatibility-version=19   crctable.c
+clang -c -o decompress.bc -DSPEC_CPU -DNDEBUG    -O2 -fno-strict-aliasing       -DSPEC_CPU_LP64         -c -O3  -S -emit-llvm -fms-compatibility-version=19   decompress.c
+clang -c -o huffman.bc -DSPEC_CPU -DNDEBUG    -O2 -fno-strict-aliasing       -DSPEC_CPU_LP64         -c -O3  -S -emit-llvm -fms-compatibility-version=19   huffman.c
+clang -c -o randtable.bc -DSPEC_CPU -DNDEBUG    -O2 -fno-strict-aliasing       -DSPEC_CPU_LP64         -c -O3  -S -emit-llvm -fms-compatibility-version=19   randtable.c
+#llvm-link   -O2 -fno-strict-aliasing  -DSPEC_CPU_LP64        spec.bc blocksort.bc bzip2.bc bzlib.bc compress.bc crctable.bc decompress.bc huffman.bc randtable.bc                     -o 401.bzip2link.bc 
+llvm-link spec.bc blocksort.bc bzip2.bc bzlib.bc compress.bc crctable.bc decompress.bc huffman.bc randtable.bc -o 401.bzip2link.bc 
+llc  -o 401.bzip2.s  401.bzip2link.bc
+g++ -o 401.bzip2_wopin 401.bzip2.s  -lrt -lm

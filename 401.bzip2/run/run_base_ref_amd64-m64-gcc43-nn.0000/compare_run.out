@@ -1,0 +1,19 @@
+timer ticks over every 1000 ns
+# Starting run for copy #0
+cd /nethome/girish/Developement/llvm3.8.0/Workloads/spec2006/benchspec/CPU2006/401.bzip2/run/run_base_ref_amd64-m64-gcc43-nn.0000
+specperl /nethome/girish/Developement/llvm3.8.0/Workloads/spec2006/bin/specdiff -m -l 10 /nethome/girish/Developement/llvm3.8.0/Workloads/spec2006/benchspec/CPU2006/401.bzip2/data/ref/output/chicken.jpg.out chicken.jpg.out > chicken.jpg.out.cmp
+# Starting run for copy #0
+cd /nethome/girish/Developement/llvm3.8.0/Workloads/spec2006/benchspec/CPU2006/401.bzip2/run/run_base_ref_amd64-m64-gcc43-nn.0000
+specperl /nethome/girish/Developement/llvm3.8.0/Workloads/spec2006/bin/specdiff -m -l 10 /nethome/girish/Developement/llvm3.8.0/Workloads/spec2006/benchspec/CPU2006/401.bzip2/data/ref/output/input.combined.out input.combined.out > input.combined.out.cmp
+# Starting run for copy #0
+cd /nethome/girish/Developement/llvm3.8.0/Workloads/spec2006/benchspec/CPU2006/401.bzip2/run/run_base_ref_amd64-m64-gcc43-nn.0000
+specperl /nethome/girish/Developement/llvm3.8.0/Workloads/spec2006/bin/specdiff -m -l 10 /nethome/girish/Developement/llvm3.8.0/Workloads/spec2006/benchspec/CPU2006/401.bzip2/data/ref/output/input.program.out input.program.out > input.program.out.cmp
+# Starting run for copy #0
+cd /nethome/girish/Developement/llvm3.8.0/Workloads/spec2006/benchspec/CPU2006/401.bzip2/run/run_base_ref_amd64-m64-gcc43-nn.0000
+specperl /nethome/girish/Developement/llvm3.8.0/Workloads/spec2006/bin/specdiff -m -l 10 /nethome/girish/Developement/llvm3.8.0/Workloads/spec2006/benchspec/CPU2006/401.bzip2/data/ref/output/input.source.out input.source.out > input.source.out.cmp
+# Starting run for copy #0
+cd /nethome/girish/Developement/llvm3.8.0/Workloads/spec2006/benchspec/CPU2006/401.bzip2/run/run_base_ref_amd64-m64-gcc43-nn.0000
+specperl /nethome/girish/Developement/llvm3.8.0/Workloads/spec2006/bin/specdiff -m -l 10 /nethome/girish/Developement/llvm3.8.0/Workloads/spec2006/benchspec/CPU2006/401.bzip2/data/ref/output/liberty.jpg.out liberty.jpg.out > liberty.jpg.out.cmp
+# Starting run for copy #0
+cd /nethome/girish/Developement/llvm3.8.0/Workloads/spec2006/benchspec/CPU2006/401.bzip2/run/run_base_ref_amd64-m64-gcc43-nn.0000
+specperl /nethome/girish/Developement/llvm3.8.0/Workloads/spec2006/bin/specdiff -m -l 10 /nethome/girish/Developement/llvm3.8.0/Workloads/spec2006/benchspec/CPU2006/401.bzip2/data/ref/output/text.html.out text.html.out > text.html.out.cmp

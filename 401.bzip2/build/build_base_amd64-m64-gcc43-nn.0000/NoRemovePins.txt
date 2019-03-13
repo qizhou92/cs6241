@@ -1,0 +1,17 @@
+bzopen_or_bzdopen
+spec_init
+spec_random_load
+spec_load
+main
+spec_init
+spec_random_load
+spec_load
+main
+BZ2_bzCompress
+BZ2_bzBuffToBuffCompress
+spec_init
+spec_random_load
+spec_load
+main
+BZ2_bzCompress
+BZ2_bzBuffToBuffCompress

@@ -1,0 +1,928 @@
+; ModuleID = 'bzip2.c'
+target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-unknown-linux-gnu"
+
+%struct._IO_FILE = type { i32, i8*, i8*, i8*, i8*, i8*, i8*, i8*, i8*, i8*, i8*, i8*, %struct._IO_marker*, %struct._IO_FILE*, i32, i32, i64, i16, i8, [1 x i8], i8*, i64, i8*, i8*, i8*, i8*, i64, i32, [20 x i8] }
+%struct._IO_marker = type { %struct._IO_marker*, %struct._IO_FILE*, i32 }
+%struct.UInt64 = type { [8 x i8] }
+
+@blockSize100k = common global i32 0, align 4
+@verbosity = common global i32 0, align 4
+@workFactor = common global i32 0, align 4
+@stderr = external global %struct._IO_FILE*, align 8
+@outputHandleJustInCase = common global i32 0, align 4
+@.str.1 = private unnamed_addr constant [22 x i8] c" no data compressed.\0A\00", align 1
+@.str.2 = private unnamed_addr constant [57 x i8] c"%6.3f:1, %6.3f bits/byte, %5.2f%% saved, %s in, %s out.\0A\00", align 1
+@.str.3 = private unnamed_addr constant [26 x i8] c"compress:unexpected error\00", align 1
+@smallMode = common global i8 0, align 1
+@.str.5 = private unnamed_addr constant [27 x i8] c"decompress:bzReadGetUnused\00", align 1
+@.str.6 = private unnamed_addr constant [6 x i8] c"\0A    \00", align 1
+@forceOverwrite = common global i8 0, align 1
+@noisy = common global i8 0, align 1
+@.str.7 = private unnamed_addr constant [45 x i8] c"\0A%s: %s: trailing garbage after EOF ignored\0A\00", align 1
+@progName = common global i8* null, align 8
+@inName = common global [1034 x i8] zeroinitializer, align 16
+@.str.8 = private unnamed_addr constant [28 x i8] c"decompress:unexpected error\00", align 1
+@keepInputFiles = common global i8 0, align 1
+@deleteOutputOnInterrupt = common global i8 0, align 1
+@testFailsExist = common global i8 0, align 1
+@unzFailsExist = common global i8 0, align 1
+@numFileNames = common global i32 0, align 4
+@numFilesProcessed = common global i32 0, align 4
+@exitValue = common global i32 0, align 4
+@opMode = common global i32 0, align 4
+@srcMode = common global i32 0, align 4
+@longestFileName = common global i32 0, align 4
+@outName = common global [1034 x i8] zeroinitializer, align 16
+@tmpName = common global [1034 x i8] zeroinitializer, align 16
+@progNameReally = common global [1034 x i8] zeroinitializer, align 16
+@.str.10 = private unnamed_addr constant [148 x i8] c"\0A%s: PANIC -- internal consistency error:\0A\09%s\0A\09This is probably a BUG, but it may be in your COMPILER.  Please do not bother\0A\09the original author.\0A\00", align 1
+@.str.11 = private unnamed_addr constant [36 x i8] c"\09Input file = %s, output file = %s\0A\00", align 1
+@.str.12 = private unnamed_addr constant [47 x i8] c"\0A%s: Data integrity error when decompressing.\0A\00", align 1
+@.str.13 = private unnamed_addr constant [241 x i8] c"\0AIt is possible that the compressed file(s) have become corrupted.\0AYou can use the -tvv option to test integrity of such files.\0A\0AYou can use the `bzip2recover' program to attempt to recover\0Adata from undamaged sections of corrupted files.\0A\0A\00", align 1
+@.str.14 = private unnamed_addr constant [95 x i8] c"\0A%s: Compressed file ends unexpectedly;\0A\09perhaps it is corrupted?  *Possible* reason follows.\0A\00", align 1
+@.str.15 = private unnamed_addr constant [65 x i8] c"\0A%s: I/O or other error, bailing out.  Possible reason follows.\0A\00", align 1
+@.str.16 = private unnamed_addr constant [38 x i8] c"\0A%s: couldn't allocate enough memory\0A\00", align 1
+@.str.17 = private unnamed_addr constant [236 x i8] c"bzip2: I'm not configured correctly for this platform!\0A\09I require Int32, Int16 and Char to have sizes\0A\09of 4, 2 and 1 bytes to run properly, and they don't.\0A\09Probably you can fix this by defining them correctly,\0A\09and recompiling.  Bye!\0A\00", align 1
+
+; Function Attrs: nounwind uwtable
+define void @compressStream(i32 %stream, i32 %zStream) #0 {
+entry:
+  %n_copy.i121 = alloca i64, align 8
+  %buf.i = alloca [32 x i8], align 16
+  %n_copy.i = alloca i64, align 8
+  %ibuf = alloca [5000 x i8], align 16
+  %nbytes_in_lo32 = alloca i32, align 4
+  %nbytes_in_hi32 = alloca i32, align 4
+  %nbytes_out_lo32 = alloca i32, align 4
+  %nbytes_out_hi32 = alloca i32, align 4
+  %bzerr = alloca i32, align 4
+  %bzerr_dummy = alloca i32, align 4
+  %buf_nin = alloca [32 x i8], align 16
+  %buf_nout = alloca [32 x i8], align 16
+  %nbytes_in = alloca i64, align 8
+  %tmpcast = bitcast i64* %nbytes_in to %struct.UInt64*
+  %nbytes_out = alloca i64, align 8
+  %tmpcast167 = bitcast i64* %nbytes_out to %struct.UInt64*
+  %0 = getelementptr inbounds [5000 x i8], [5000 x i8]* %ibuf, i64 0, i64 0
+  call void @llvm.lifetime.start(i64 5000, i8* %0) #6
+  %1 = bitcast i32* %nbytes_in_lo32 to i8*
+  call void @llvm.lifetime.start(i64 4, i8* %1) #6
+  %2 = bitcast i32* %nbytes_in_hi32 to i8*
+  call void @llvm.lifetime.start(i64 4, i8* %2) #6
+  %3 = bitcast i32* %nbytes_out_lo32 to i8*
+  call void @llvm.lifetime.start(i64 4, i8* %3) #6
+  %4 = bitcast i32* %nbytes_out_hi32 to i8*
+  call void @llvm.lifetime.start(i64 4, i8* %4) #6
+  %5 = bitcast i32* %bzerr to i8*
+  call void @llvm.lifetime.start(i64 4, i8* %5) #6
+  %6 = bitcast i32* %bzerr_dummy to i8*
+  call void @llvm.lifetime.start(i64 4, i8* %6) #6
+  %7 = load i32, i32* @blockSize100k, align 4
+  %8 = load i32, i32* @verbosity, align 4
+  %9 = load i32, i32* @workFactor, align 4
+  %call = call i8* @BZ2_bzWriteOpen(i32* nonnull %bzerr, i32 %zStream, i32 %7, i32 %8, i32 %9) #6
+  %10 = load i32, i32* %bzerr, align 4
+  %cmp = icmp eq i32 %10, 0
+  br i1 %cmp, label %if.end, label %errhandler
+
+if.end:                                           ; preds = %entry
+  %11 = load i32, i32* @verbosity, align 4
+  %cmp1 = icmp sgt i32 %11, 1
+  br i1 %cmp1, label %if.then2, label %while.body
+
+if.then2:                                         ; preds = %if.end
+  %12 = load %struct._IO_FILE*, %struct._IO_FILE** @stderr, align 8
+  %fputc = call i32 @fputc(i32 10, %struct._IO_FILE* %12) #7
+  br label %while.body
+
+while.body:                                       ; preds = %if.then2, %if.end, %if.end12
+  %call.i = call i32 @spec_getc(i32 %stream) #6
+  %cmp.i = icmp eq i32 %call.i, -1
+  br i1 %cmp.i, label %while.end, label %if.end7
+
+if.end7:                                          ; preds = %while.body
+  %conv.i = trunc i32 %call.i to i8
+  %call1.i = call i32 @spec_ungetc(i8 zeroext %conv.i, i32 %stream) #6
+  %call8 = call i32 @spec_fread(i8* %0, i32 1, i32 5000, i32 %stream) #6
+  %cmp9 = icmp sgt i32 %call8, 0
+  br i1 %cmp9, label %if.then10, label %if.end12
+
+if.then10:                                        ; preds = %if.end7
+  call void @BZ2_bzWrite(i32* nonnull %bzerr, i8* %call, i8* %0, i32 %call8) #6
+  br label %if.end12
+
+if.end12:                                         ; preds = %if.then10, %if.end7
+  %13 = load i32, i32* %bzerr, align 4
+  %cmp13 = icmp eq i32 %13, 0
+  br i1 %cmp13, label %while.body, label %errhandler
+
+while.end:                                        ; preds = %while.body
+  call void @BZ2_bzWriteClose64(i32* nonnull %bzerr, i8* %call, i32 0, i32* nonnull %nbytes_in_lo32, i32* nonnull %nbytes_in_hi32, i32* nonnull %nbytes_out_lo32, i32* nonnull %nbytes_out_hi32) #6
+  %14 = load i32, i32* %bzerr, align 4
+  %cmp16 = icmp eq i32 %14, 0
+  br i1 %cmp16, label %if.end21, label %errhandler
+
+if.end21:                                         ; preds = %while.end
+  %cmp22 = icmp eq i32 %zStream, 1
+  br i1 %cmp22, label %if.end27, label %if.then23
+
+if.then23:                                        ; preds = %if.end21
+  store i32 0, i32* @outputHandleJustInCase, align 4
+  br label %if.end27
+
+if.end27:                                         ; preds = %if.then23, %if.end21
+  store i32 0, i32* @outputHandleJustInCase, align 4
+  %15 = load i32, i32* @verbosity, align 4
+  %cmp31 = icmp sgt i32 %15, 0
+  br i1 %cmp31, label %if.then32, label %cleanup
+
+if.then32:                                        ; preds = %if.end27
+  %16 = load i32, i32* %nbytes_in_lo32, align 4
+  %17 = load i32, i32* %nbytes_in_hi32, align 4
+  %18 = or i32 %17, %16
+  %19 = icmp eq i32 %18, 0
+  br i1 %19, label %if.then35, label %if.else
+
+if.then35:                                        ; preds = %if.then32
+  %20 = load %struct._IO_FILE*, %struct._IO_FILE** @stderr, align 8
+  %21 = call i64 @fwrite(i8* nonnull getelementptr inbounds ([22 x i8], [22 x i8]* @.str.1, i64 0, i64 0), i64 21, i64 1, %struct._IO_FILE* %20) #7
+  br label %cleanup
+
+if.else:                                          ; preds = %if.then32
+  %22 = getelementptr inbounds [32 x i8], [32 x i8]* %buf_nin, i64 0, i64 0
+  call void @llvm.lifetime.start(i64 32, i8* %22) #6
+  %23 = getelementptr inbounds [32 x i8], [32 x i8]* %buf_nout, i64 0, i64 0
+  call void @llvm.lifetime.start(i64 32, i8* %23) #6
+  %24 = bitcast i64* %nbytes_in to i8*
+  call void @llvm.lifetime.start(i64 8, i8* %24) #6
+  %25 = bitcast i64* %nbytes_out to i8*
+  call void @llvm.lifetime.start(i64 8, i8* %25) #6
+  %shr.i = lshr i32 %17, 24
+  %conv.i76 = trunc i32 %shr.i to i8
+  %arrayidx.i = getelementptr inbounds %struct.UInt64, %struct.UInt64* %tmpcast, i64 0, i32 0, i64 7
+  store i8 %conv.i76, i8* %arrayidx.i, align 1
+  %shr1.i = lshr i32 %17, 16
+  %conv3.i = trunc i32 %shr1.i to i8
+  %arrayidx5.i = getelementptr inbounds %struct.UInt64, %struct.UInt64* %tmpcast, i64 0, i32 0, i64 6
+  store i8 %conv3.i, i8* %arrayidx5.i, align 2
+  %shr6.i = lshr i32 %17, 8
+  %conv8.i = trunc i32 %shr6.i to i8
+  %arrayidx10.i = getelementptr inbounds %struct.UInt64, %struct.UInt64* %tmpcast, i64 0, i32 0, i64 5
+  store i8 %conv8.i, i8* %arrayidx10.i, align 1
+  %conv12.i = trunc i32 %17 to i8
+  %arrayidx14.i = getelementptr inbounds %struct.UInt64, %struct.UInt64* %tmpcast, i64 0, i32 0, i64 4
+  store i8 %conv12.i, i8* %arrayidx14.i, align 4
+  %shr15.i = lshr i32 %16, 24
+  %conv17.i = trunc i32 %shr15.i to i8
+  %arrayidx19.i = getelementptr inbounds %struct.UInt64, %struct.UInt64* %tmpcast, i64 0, i32 0, i64 3
+  store i8 %conv17.i, i8* %arrayidx19.i, align 1
+  %shr20.i = lshr i32 %16, 16
+  %conv22.i = trunc i32 %shr20.i to i8
+  %arrayidx24.i = getelementptr inbounds %struct.UInt64, %struct.UInt64* %tmpcast, i64 0, i32 0, i64 2
+  store i8 %conv22.i, i8* %arrayidx24.i, align 2
+  %shr25.i = lshr i32 %16, 8
+  %conv27.i = trunc i32 %shr25.i to i8
+  %arrayidx29.i = getelementptr inbounds %struct.UInt64, %struct.UInt64* %tmpcast, i64 0, i32 0, i64 1
+  store i8 %conv27.i, i8* %arrayidx29.i, align 1
+  %conv31.i = trunc i32 %16 to i8
+  store i8 %conv31.i, i8* %24, align 8
+  %26 = load i32, i32* %nbytes_out_lo32, align 4
+  %27 = load i32, i32* %nbytes_out_hi32, align 4
+  %shr.i77 = lshr i32 %27, 24
+  %conv.i78 = trunc i32 %shr.i77 to i8
+  %arrayidx.i79 = getelementptr inbounds %struct.UInt64, %struct.UInt64* %tmpcast167, i64 0, i32 0, i64 7
+  store i8 %conv.i78, i8* %arrayidx.i79, align 1
+  %shr1.i80 = lshr i32 %27, 16
+  %conv3.i81 = trunc i32 %shr1.i80 to i8
+  %arrayidx5.i82 = getelementptr inbounds %struct.UInt64, %struct.UInt64* %tmpcast167, i64 0, i32 0, i64 6
+  store i8 %conv3.i81, i8* %arrayidx5.i82, align 2
+  %shr6.i83 = lshr i32 %27, 8
+  %conv8.i84 = trunc i32 %shr6.i83 to i8
+  %arrayidx10.i85 = getelementptr inbounds %struct.UInt64, %struct.UInt64* %tmpcast167, i64 0, i32 0, i64 5
+  store i8 %conv8.i84, i8* %arrayidx10.i85, align 1
+  %conv12.i86 = trunc i32 %27 to i8
+  %arrayidx14.i87 = getelementptr inbounds %struct.UInt64, %struct.UInt64* %tmpcast167, i64 0, i32 0, i64 4
+  store i8 %conv12.i86, i8* %arrayidx14.i87, align 4
+  %shr15.i88 = lshr i32 %26, 24
+  %conv17.i89 = trunc i32 %shr15.i88 to i8
+  %arrayidx19.i90 = getelementptr inbounds %struct.UInt64, %struct.UInt64* %tmpcast167, i64 0, i32 0, i64 3
+  store i8 %conv17.i89, i8* %arrayidx19.i90, align 1
+  %shr20.i91 = lshr i32 %26, 16
+  %conv22.i92 = trunc i32 %shr20.i91 to i8
+  %arrayidx24.i93 = getelementptr inbounds %struct.UInt64, %struct.UInt64* %tmpcast167, i64 0, i32 0, i64 2
+  store i8 %conv22.i92, i8* %arrayidx24.i93, align 2
+  %shr25.i94 = lshr i32 %26, 8
+  %conv27.i95 = trunc i32 %shr25.i94 to i8
+  %arrayidx29.i96 = getelementptr inbounds %struct.UInt64, %struct.UInt64* %tmpcast167, i64 0, i32 0, i64 1
+  store i8 %conv27.i95, i8* %arrayidx29.i96, align 1
+  %conv31.i97 = trunc i32 %26 to i8
+  store i8 %conv31.i97, i8* %25, align 8
+  br label %for.body.i
+
+for.body.i:                                       ; preds = %for.body.i, %if.else
+  %indvars.iv.i = phi i64 [ 0, %if.else ], [ %indvars.iv.next.i, %for.body.i ]
+  %sum.011.i = phi double [ 0.000000e+00, %if.else ], [ %add.i, %for.body.i ]
+  %base.010.i = phi double [ 1.000000e+00, %if.else ], [ %mul1.i, %for.body.i ]
+  %arrayidx.i99 = getelementptr inbounds %struct.UInt64, %struct.UInt64* %tmpcast, i64 0, i32 0, i64 %indvars.iv.i
+  %28 = load i8, i8* %arrayidx.i99, align 1
+  %conv.i100 = uitofp i8 %28 to double
+  %mul.i = fmul double %base.010.i, %conv.i100
+  %add.i = fadd double %sum.011.i, %mul.i
+  %mul1.i = fmul double %base.010.i, 2.560000e+02
+  %indvars.iv.next.i = add nuw nsw i64 %indvars.iv.i, 1
+  %exitcond.i = icmp eq i64 %indvars.iv.next.i, 8
+  br i1 %exitcond.i, label %for.body.i111, label %for.body.i
+
+for.body.i111:                                    ; preds = %for.body.i, %for.body.i111
+  %indvars.iv.i101 = phi i64 [ %indvars.iv.next.i109, %for.body.i111 ], [ 0, %for.body.i ]
+  %sum.011.i102 = phi double [ %add.i107, %for.body.i111 ], [ 0.000000e+00, %for.body.i ]
+  %base.010.i103 = phi double [ %mul1.i108, %for.body.i111 ], [ 1.000000e+00, %for.body.i ]
+  %arrayidx.i104 = getelementptr inbounds %struct.UInt64, %struct.UInt64* %tmpcast167, i64 0, i32 0, i64 %indvars.iv.i101
+  %29 = load i8, i8* %arrayidx.i104, align 1
+  %conv.i105 = uitofp i8 %29 to double
+  %mul.i106 = fmul double %base.010.i103, %conv.i105
+  %add.i107 = fadd double %sum.011.i102, %mul.i106
+  %mul1.i108 = fmul double %base.010.i103, 2.560000e+02
+  %indvars.iv.next.i109 = add nuw nsw i64 %indvars.iv.i101, 1
+  %exitcond.i110 = icmp eq i64 %indvars.iv.next.i109, 8
+  br i1 %exitcond.i110, label %uInt64_to_double.exit112, label %for.body.i111
+
+uInt64_to_double.exit112:                         ; preds = %for.body.i111
+  %tmpcast.i = bitcast i64* %n_copy.i to %struct.UInt64*
+  %30 = getelementptr inbounds [32 x i8], [32 x i8]* %buf.i, i64 0, i64 0
+  call void @llvm.lifetime.start(i64 32, i8* %30) #6
+  %31 = bitcast i64* %n_copy.i to i8*
+  call void @llvm.lifetime.start(i64 8, i8* %31) #6
+  %32 = load i64, i64* %nbytes_in, align 8
+  store i64 %32, i64* %n_copy.i, align 8
+  br label %do.body.i
+
+do.body.i:                                        ; preds = %for.body.i26.i, %uInt64_to_double.exit112
+  %indvars.iv30.i = phi i64 [ 0, %uInt64_to_double.exit112 ], [ %indvars.iv.next31.i, %for.body.i26.i ]
+  br label %for.body.i.i
+
+for.body.i.i:                                     ; preds = %for.body.i.i, %do.body.i
+  %indvars.iv.i.i = phi i64 [ 7, %do.body.i ], [ %indvars.iv.next.i.i, %for.body.i.i ]
+  %rem.015.i.i = phi i32 [ 0, %do.body.i ], [ %rem6.i.i, %for.body.i.i ]
+  %mul.i.i = shl nuw nsw i32 %rem.015.i.i, 8
+  %arrayidx.i.i = getelementptr inbounds %struct.UInt64, %struct.UInt64* %tmpcast.i, i64 0, i32 0, i64 %indvars.iv.i.i
+  %33 = load i8, i8* %arrayidx.i.i, align 1
+  %conv.i.i = zext i8 %33 to i32
+  %add.i.i = or i32 %conv.i.i, %mul.i.i
+  %div.i.i = udiv i32 %add.i.i, 10
+  %conv2.i.i = trunc i32 %div.i.i to i8
+  store i8 %conv2.i.i, i8* %arrayidx.i.i, align 1
+  %rem6.i.i = urem i32 %add.i.i, 10
+  %indvars.iv.next.i.i = add nsw i64 %indvars.iv.i.i, -1
+  %cmp.i.i = icmp sgt i64 %indvars.iv.i.i, 0
+  br i1 %cmp.i.i, label %for.body.i.i, label %uInt64_qrm10.exit.i
+
+uInt64_qrm10.exit.i:                              ; preds = %for.body.i.i
+  %add.i113 = or i32 %rem6.i.i, 48
+  %conv.i114 = trunc i32 %add.i113 to i8
+  %arrayidx.i115 = getelementptr inbounds [32 x i8], [32 x i8]* %buf.i, i64 0, i64 %indvars.iv30.i
+  store i8 %conv.i114, i8* %arrayidx.i115, align 1
+  %indvars.iv.next31.i = add nuw nsw i64 %indvars.iv30.i, 1
+  br label %for.body.i26.i
+
+for.cond.i.i:                                     ; preds = %for.body.i26.i
+  %cmp.i22.i = icmp slt i64 %indvars.iv.next.i25.i, 8
+  br i1 %cmp.i22.i, label %for.body.i26.i, label %do.end.i
+
+for.body.i26.i:                                   ; preds = %for.cond.i.i, %uInt64_qrm10.exit.i
+  %indvars.iv.i23.i = phi i64 [ 0, %uInt64_qrm10.exit.i ], [ %indvars.iv.next.i25.i, %for.cond.i.i ]
+  %arrayidx.i24.i = getelementptr inbounds %struct.UInt64, %struct.UInt64* %tmpcast.i, i64 0, i32 0, i64 %indvars.iv.i23.i
+  %34 = load i8, i8* %arrayidx.i24.i, align 1
+  %cmp1.i.i = icmp eq i8 %34, 0
+  %indvars.iv.next.i25.i = add nuw nsw i64 %indvars.iv.i23.i, 1
+  br i1 %cmp1.i.i, label %for.cond.i.i, label %do.body.i
+
+do.end.i:                                         ; preds = %for.cond.i.i
+  %35 = trunc i64 %indvars.iv30.i to i32
+  %sext.i = shl i64 %indvars.iv.next31.i, 32
+  %idxprom2.i = ashr exact i64 %sext.i, 32
+  %arrayidx3.i = getelementptr inbounds [32 x i8], [32 x i8]* %buf_nin, i64 0, i64 %idxprom2.i
+  store i8 0, i8* %arrayidx3.i, align 1
+  %cmp28.i = icmp slt i32 %35, 0
+  br i1 %cmp28.i, label %uInt64_toAscii.exit, label %for.body.lr.ph.i
+
+for.body.lr.ph.i:                                 ; preds = %do.end.i
+  %36 = add i32 %35, 1
+  br label %for.body.i119
+
+for.body.i119:                                    ; preds = %for.body.i119, %for.body.lr.ph.i
+  %indvars.iv.i116 = phi i64 [ %indvars.iv.next.i117, %for.body.i119 ], [ 0, %for.body.lr.ph.i ]
+  %sub5.i = sub i64 %indvars.iv30.i, %indvars.iv.i116
+  %sext32.i = shl i64 %sub5.i, 32
+  %idxprom6.i = ashr exact i64 %sext32.i, 32
+  %arrayidx7.i = getelementptr inbounds [32 x i8], [32 x i8]* %buf.i, i64 0, i64 %idxprom6.i
+  %37 = load i8, i8* %arrayidx7.i, align 1
+  %arrayidx9.i = getelementptr inbounds [32 x i8], [32 x i8]* %buf_nin, i64 0, i64 %indvars.iv.i116
+  store i8 %37, i8* %arrayidx9.i, align 1
+  %indvars.iv.next.i117 = add nuw nsw i64 %indvars.iv.i116, 1
+  %lftr.wideiv168 = trunc i64 %indvars.iv.next.i117 to i32
+  %exitcond169 = icmp eq i32 %lftr.wideiv168, %36
+  br i1 %exitcond169, label %uInt64_toAscii.exit, label %for.body.i119
+
+uInt64_toAscii.exit:                              ; preds = %for.body.i119, %do.end.i
+  call void @llvm.lifetime.end(i64 8, i8* %31) #6
+  call void @llvm.lifetime.end(i64 32, i8* %30) #6
+  %tmpcast.i122 = bitcast i64* %n_copy.i121 to %struct.UInt64*
+  call void @llvm.lifetime.start(i64 32, i8* %30) #6
+  %38 = bitcast i64* %n_copy.i121 to i8*
+  call void @llvm.lifetime.start(i64 8, i8* %38) #6
+  %39 = load i64, i64* %nbytes_out, align 8
+  store i64 %39, i64* %n_copy.i121, align 8
+  br label %do.body.i124
+
+do.body.i124:                                     ; preds = %for.body.i26.i148, %uInt64_toAscii.exit
+  %indvars.iv30.i123 = phi i64 [ 0, %uInt64_toAscii.exit ], [ %indvars.iv.next31.i140, %for.body.i26.i148 ]
+  br label %for.body.i.i136
+
+for.body.i.i136:                                  ; preds = %for.body.i.i136, %do.body.i124
+  %indvars.iv.i.i125 = phi i64 [ 7, %do.body.i124 ], [ %indvars.iv.next.i.i134, %for.body.i.i136 ]
+  %rem.015.i.i126 = phi i32 [ 0, %do.body.i124 ], [ %rem6.i.i133, %for.body.i.i136 ]
+  %mul.i.i127 = shl nuw nsw i32 %rem.015.i.i126, 8
+  %arrayidx.i.i128 = getelementptr inbounds %struct.UInt64, %struct.UInt64* %tmpcast.i122, i64 0, i32 0, i64 %indvars.iv.i.i125
+  %40 = load i8, i8* %arrayidx.i.i128, align 1
+  %conv.i.i129 = zext i8 %40 to i32
+  %add.i.i130 = or i32 %conv.i.i129, %mul.i.i127
+  %div.i.i131 = udiv i32 %add.i.i130, 10
+  %conv2.i.i132 = trunc i32 %div.i.i131 to i8
+  store i8 %conv2.i.i132, i8* %arrayidx.i.i128, align 1
+  %rem6.i.i133 = urem i32 %add.i.i130, 10
+  %indvars.iv.next.i.i134 = add nsw i64 %indvars.iv.i.i125, -1
+  %cmp.i.i135 = icmp sgt i64 %indvars.iv.i.i125, 0
+  br i1 %cmp.i.i135, label %for.body.i.i136, label %uInt64_qrm10.exit.i141
+
+uInt64_qrm10.exit.i141:                           ; preds = %for.body.i.i136
+  %add.i137 = or i32 %rem6.i.i133, 48
+  %conv.i138 = trunc i32 %add.i137 to i8
+  %arrayidx.i139 = getelementptr inbounds [32 x i8], [32 x i8]* %buf.i, i64 0, i64 %indvars.iv30.i123
+  store i8 %conv.i138, i8* %arrayidx.i139, align 1
+  %indvars.iv.next31.i140 = add nuw nsw i64 %indvars.iv30.i123, 1
+  br label %for.body.i26.i148
+
+for.cond.i.i143:                                  ; preds = %for.body.i26.i148
+  %cmp.i22.i142 = icmp slt i64 %indvars.iv.next.i25.i147, 8
+  br i1 %cmp.i22.i142, label %for.body.i26.i148, label %do.end.i153
+
+for.body.i26.i148:                                ; preds = %for.cond.i.i143, %uInt64_qrm10.exit.i141
+  %indvars.iv.i23.i144 = phi i64 [ 0, %uInt64_qrm10.exit.i141 ], [ %indvars.iv.next.i25.i147, %for.cond.i.i143 ]
+  %arrayidx.i24.i145 = getelementptr inbounds %struct.UInt64, %struct.UInt64* %tmpcast.i122, i64 0, i32 0, i64 %indvars.iv.i23.i144
+  %41 = load i8, i8* %arrayidx.i24.i145, align 1
+  %cmp1.i.i146 = icmp eq i8 %41, 0
+  %indvars.iv.next.i25.i147 = add nuw nsw i64 %indvars.iv.i23.i144, 1
+  br i1 %cmp1.i.i146, label %for.cond.i.i143, label %do.body.i124
+
+do.end.i153:                                      ; preds = %for.cond.i.i143
+  %42 = trunc i64 %indvars.iv30.i123 to i32
+  %sext.i149 = shl i64 %indvars.iv.next31.i140, 32
+  %idxprom2.i150 = ashr exact i64 %sext.i149, 32
+  %arrayidx3.i151 = getelementptr inbounds [32 x i8], [32 x i8]* %buf_nout, i64 0, i64 %idxprom2.i150
+  store i8 0, i8* %arrayidx3.i151, align 1
+  %cmp28.i152 = icmp slt i32 %42, 0
+  br i1 %cmp28.i152, label %uInt64_toAscii.exit165, label %for.body.lr.ph.i154
+
+for.body.lr.ph.i154:                              ; preds = %do.end.i153
+  %43 = add i32 %42, 1
+  br label %for.body.i164
+
+for.body.i164:                                    ; preds = %for.body.i164, %for.body.lr.ph.i154
+  %indvars.iv.i155 = phi i64 [ %indvars.iv.next.i161, %for.body.i164 ], [ 0, %for.body.lr.ph.i154 ]
+  %sub5.i156 = sub i64 %indvars.iv30.i123, %indvars.iv.i155
+  %sext32.i157 = shl i64 %sub5.i156, 32
+  %idxprom6.i158 = ashr exact i64 %sext32.i157, 32
+  %arrayidx7.i159 = getelementptr inbounds [32 x i8], [32 x i8]* %buf.i, i64 0, i64 %idxprom6.i158
+  %44 = load i8, i8* %arrayidx7.i159, align 1
+  %arrayidx9.i160 = getelementptr inbounds [32 x i8], [32 x i8]* %buf_nout, i64 0, i64 %indvars.iv.i155
+  store i8 %44, i8* %arrayidx9.i160, align 1
+  %indvars.iv.next.i161 = add nuw nsw i64 %indvars.iv.i155, 1
+  %lftr.wideiv = trunc i64 %indvars.iv.next.i161 to i32
+  %exitcond = icmp eq i32 %lftr.wideiv, %43
+  br i1 %exitcond, label %uInt64_toAscii.exit165, label %for.body.i164
+
+uInt64_toAscii.exit165:                           ; preds = %for.body.i164, %do.end.i153
+  call void @llvm.lifetime.end(i64 8, i8* %38) #6
+  call void @llvm.lifetime.end(i64 32, i8* %30) #6
+  %45 = load %struct._IO_FILE*, %struct._IO_FILE** @stderr, align 8
+  %div = fdiv double %add.i, %add.i107
+  %mul = fmul double %add.i107, 8.000000e+00
+  %div41 = fdiv double %mul, %add.i
+  %div42 = fdiv double %add.i107, %add.i
+  %sub = fsub double 1.000000e+00, %div42
+  %mul43 = fmul double %sub, 1.000000e+02
+  %call46 = call i32 (%struct._IO_FILE*, i8*, ...) @fprintf(%struct._IO_FILE* %45, i8* nonnull getelementptr inbounds ([57 x i8], [57 x i8]* @.str.2, i64 0, i64 0), double %div, double %div41, double %mul43, i8* %22, i8* nonnull %23) #7
+  call void @llvm.lifetime.end(i64 8, i8* %25) #6
+  call void @llvm.lifetime.end(i64 8, i8* %24) #6
+  call void @llvm.lifetime.end(i64 32, i8* nonnull %23) #6
+  call void @llvm.lifetime.end(i64 32, i8* %22) #6
+  br label %cleanup
+
+errhandler:                                       ; preds = %if.end12, %while.end, %entry
+  call void @BZ2_bzWriteClose64(i32* nonnull %bzerr_dummy, i8* %call, i32 1, i32* nonnull %nbytes_in_lo32, i32* nonnull %nbytes_in_hi32, i32* nonnull %nbytes_out_lo32, i32* nonnull %nbytes_out_hi32) #6
+  %46 = load i32, i32* %bzerr, align 4
+  switch i32 %46, label %sw.default [
+    i32 -9, label %sw.bb
+    i32 -3, label %sw.bb49
+    i32 -6, label %errhandler_io
+  ]
+
+sw.bb:                                            ; preds = %errhandler
+  call fastcc void @configError()
+  unreachable
+
+sw.bb49:                                          ; preds = %errhandler
+  call fastcc void @outOfMemory()
+  unreachable
+
+errhandler_io:                                    ; preds = %errhandler
+  call fastcc void @ioError()
+  unreachable
+
+sw.default:                                       ; preds = %errhandler
+  call fastcc void @panic(i8* nonnull getelementptr inbounds ([26 x i8], [26 x i8]* @.str.3, i64 0, i64 0))
+  unreachable
+
+cleanup:                                          ; preds = %if.end27, %uInt64_toAscii.exit165, %if.then35
+  call void @llvm.lifetime.end(i64 4, i8* %6) #6
+  call void @llvm.lifetime.end(i64 4, i8* %5) #6
+  call void @llvm.lifetime.end(i64 4, i8* %4) #6
+  call void @llvm.lifetime.end(i64 4, i8* %3) #6
+  call void @llvm.lifetime.end(i64 4, i8* %2) #6
+  call void @llvm.lifetime.end(i64 4, i8* %1) #6
+  call void @llvm.lifetime.end(i64 5000, i8* %0) #6
+  ret void
+}
+
+; Function Attrs: argmemonly nounwind
+declare void @llvm.lifetime.start(i64, i8* nocapture) #1
+
+declare i8* @BZ2_bzWriteOpen(i32*, i32, i32, i32, i32) #2
+
+; Function Attrs: nounwind
+declare i32 @fprintf(%struct._IO_FILE* nocapture, i8* nocapture readonly, ...) #3
+
+declare i32 @spec_fread(i8*, i32, i32, i32) #2
+
+declare void @BZ2_bzWrite(i32*, i8*, i8*, i32) #2
+
+declare void @BZ2_bzWriteClose64(i32*, i8*, i32, i32*, i32*, i32*, i32*) #2
+
+; Function Attrs: argmemonly nounwind
+declare void @llvm.lifetime.end(i64, i8* nocapture) #1
+
+; Function Attrs: noreturn nounwind uwtable
+define internal fastcc void @configError() unnamed_addr #4 {
+entry:
+  %0 = load %struct._IO_FILE*, %struct._IO_FILE** @stderr, align 8
+  %1 = tail call i64 @fwrite(i8* getelementptr inbounds ([236 x i8], [236 x i8]* @.str.17, i64 0, i64 0), i64 235, i64 1, %struct._IO_FILE* %0) #7
+  store i32 0, i32* @exitValue, align 4
+  tail call void @exit(i32 0) #8
+  unreachable
+}
+
+; Function Attrs: noreturn nounwind uwtable
+define internal fastcc void @outOfMemory() unnamed_addr #4 {
+entry:
+  %0 = load %struct._IO_FILE*, %struct._IO_FILE** @stderr, align 8
+  %1 = load i8*, i8** @progName, align 8
+  %call = tail call i32 (%struct._IO_FILE*, i8*, ...) @fprintf(%struct._IO_FILE* %0, i8* getelementptr inbounds ([38 x i8], [38 x i8]* @.str.16, i64 0, i64 0), i8* %1) #7
+  %2 = load i8, i8* @noisy, align 1
+  %tobool.i = icmp eq i8 %2, 0
+  br i1 %tobool.i, label %showFileNames.exit, label %if.then.i
+
+if.then.i:                                        ; preds = %entry
+  %3 = load %struct._IO_FILE*, %struct._IO_FILE** @stderr, align 8
+  %call.i = tail call i32 (%struct._IO_FILE*, i8*, ...) @fprintf(%struct._IO_FILE* %3, i8* nonnull getelementptr inbounds ([36 x i8], [36 x i8]* @.str.11, i64 0, i64 0), i8* nonnull getelementptr inbounds ([1034 x i8], [1034 x i8]* @inName, i64 0, i64 0), i8* nonnull getelementptr inbounds ([1034 x i8], [1034 x i8]* @outName, i64 0, i64 0)) #9
+  br label %showFileNames.exit
+
+showFileNames.exit:                               ; preds = %entry, %if.then.i
+  tail call fastcc void @cleanUpAndFail()
+  unreachable
+}
+
+; Function Attrs: noreturn nounwind uwtable
+define internal fastcc void @ioError() unnamed_addr #4 {
+entry:
+  %0 = load %struct._IO_FILE*, %struct._IO_FILE** @stderr, align 8
+  %1 = load i8*, i8** @progName, align 8
+  %call = tail call i32 (%struct._IO_FILE*, i8*, ...) @fprintf(%struct._IO_FILE* %0, i8* getelementptr inbounds ([65 x i8], [65 x i8]* @.str.15, i64 0, i64 0), i8* %1) #7
+  %2 = load i8*, i8** @progName, align 8
+  tail call void @perror(i8* %2) #7
+  %3 = load i8, i8* @noisy, align 1
+  %tobool.i = icmp eq i8 %3, 0
+  br i1 %tobool.i, label %showFileNames.exit, label %if.then.i
+
+if.then.i:                                        ; preds = %entry
+  %4 = load %struct._IO_FILE*, %struct._IO_FILE** @stderr, align 8
+  %call.i = tail call i32 (%struct._IO_FILE*, i8*, ...) @fprintf(%struct._IO_FILE* %4, i8* nonnull getelementptr inbounds ([36 x i8], [36 x i8]* @.str.11, i64 0, i64 0), i8* nonnull getelementptr inbounds ([1034 x i8], [1034 x i8]* @inName, i64 0, i64 0), i8* nonnull getelementptr inbounds ([1034 x i8], [1034 x i8]* @outName, i64 0, i64 0)) #9
+  br label %showFileNames.exit
+
+showFileNames.exit:                               ; preds = %entry, %if.then.i
+  tail call fastcc void @cleanUpAndFail()
+  unreachable
+}
+
+; Function Attrs: noreturn nounwind uwtable
+define internal fastcc void @panic(i8* %s) unnamed_addr #4 {
+entry:
+  %0 = load %struct._IO_FILE*, %struct._IO_FILE** @stderr, align 8
+  %1 = load i8*, i8** @progName, align 8
+  %call = tail call i32 (%struct._IO_FILE*, i8*, ...) @fprintf(%struct._IO_FILE* %0, i8* getelementptr inbounds ([148 x i8], [148 x i8]* @.str.10, i64 0, i64 0), i8* %1, i8* %s) #7
+  %2 = load i8, i8* @noisy, align 1
+  %tobool.i = icmp eq i8 %2, 0
+  br i1 %tobool.i, label %showFileNames.exit, label %if.then.i
+
+if.then.i:                                        ; preds = %entry
+  %3 = load %struct._IO_FILE*, %struct._IO_FILE** @stderr, align 8
+  %call.i = tail call i32 (%struct._IO_FILE*, i8*, ...) @fprintf(%struct._IO_FILE* %3, i8* nonnull getelementptr inbounds ([36 x i8], [36 x i8]* @.str.11, i64 0, i64 0), i8* nonnull getelementptr inbounds ([1034 x i8], [1034 x i8]* @inName, i64 0, i64 0), i8* nonnull getelementptr inbounds ([1034 x i8], [1034 x i8]* @outName, i64 0, i64 0)) #9
+  br label %showFileNames.exit
+
+showFileNames.exit:                               ; preds = %entry, %if.then.i
+  tail call fastcc void @cleanUpAndFail()
+  unreachable
+}
+
+; Function Attrs: nounwind uwtable
+define zeroext i8 @uncompressStream(i32 %zStream, i32 %stream) #0 {
+entry:
+  %bzerr = alloca i32, align 4
+  %bzerr_dummy = alloca i32, align 4
+  %obuf = alloca [5000 x i8], align 16
+  %unused = alloca [5000 x i8], align 16
+  %unused236 = getelementptr inbounds [5000 x i8], [5000 x i8]* %unused, i64 0, i64 0
+  %nUnused = alloca i32, align 4
+  %unusedTmpV = alloca i8*, align 8
+  %0 = bitcast i32* %bzerr to i8*
+  call void @llvm.lifetime.start(i64 4, i8* %0) #6
+  %1 = bitcast i32* %bzerr_dummy to i8*
+  call void @llvm.lifetime.start(i64 4, i8* %1) #6
+  %2 = getelementptr inbounds [5000 x i8], [5000 x i8]* %obuf, i64 0, i64 0
+  call void @llvm.lifetime.start(i64 5000, i8* %2) #6
+  %3 = getelementptr inbounds [5000 x i8], [5000 x i8]* %unused, i64 0, i64 0
+  call void @llvm.lifetime.start(i64 5000, i8* %3) #6
+  %4 = bitcast i32* %nUnused to i8*
+  call void @llvm.lifetime.start(i64 4, i8* %4) #6
+  %5 = bitcast i8** %unusedTmpV to i8*
+  call void @llvm.lifetime.start(i64 8, i8* %5) #6
+  store i32 0, i32* %nUnused, align 4
+  %6 = load i32, i32* @verbosity, align 4
+  %7 = load i8, i8* @smallMode, align 1
+  %conv190 = zext i8 %7 to i32
+  %call191 = call i8* @BZ2_bzReadOpen(i32* nonnull %bzerr, i32 %zStream, i32 %6, i32 %conv190, i8* %3, i32 0) #6
+  %cmp192 = icmp eq i8* %call191, null
+  %8 = load i32, i32* %bzerr, align 4
+  %cmp2193 = icmp ne i32 %8, 0
+  %or.cond194 = or i1 %cmp192, %cmp2193
+  br i1 %or.cond194, label %errhandler, label %if.end.preheader
+
+if.end.preheader:                                 ; preds = %entry
+  %scevgep = getelementptr [5000 x i8], [5000 x i8]* %unused, i64 0, i64 -1
+  br label %if.end
+
+if.end:                                           ; preds = %if.end.preheader, %while.body.backedge
+  %call196 = phi i8* [ %call, %while.body.backedge ], [ %call191, %if.end.preheader ]
+  %streamNo.0195 = phi i32 [ %inc, %while.body.backedge ], [ 0, %if.end.preheader ]
+  %inc = add nuw nsw i32 %streamNo.0195, 1
+  br label %while.cond4
+
+while.cond4:                                      ; preds = %if.then21, %if.end13, %if.end
+  %9 = phi i32 [ 0, %if.end ], [ %10, %if.end13 ], [ %.pre.pre, %if.then21 ]
+  switch i32 %9, label %errhandler [
+    i32 0, label %while.body7
+    i32 4, label %if.end28
+  ]
+
+while.body7:                                      ; preds = %while.cond4
+  %call9 = call i32 @BZ2_bzRead(i32* nonnull %bzerr, i8* %call196, i8* %2, i32 5000) #6
+  %10 = load i32, i32* %bzerr, align 4
+  %cmp10 = icmp eq i32 %10, -5
+  br i1 %cmp10, label %trycat, label %if.end13
+
+if.end13:                                         ; preds = %while.body7
+  %11 = or i32 %10, 4
+  %12 = icmp eq i32 %11, 4
+  %cmp19 = icmp sgt i32 %call9, 0
+  %or.cond122 = and i1 %cmp19, %12
+  br i1 %or.cond122, label %if.then21, label %while.cond4
+
+if.then21:                                        ; preds = %if.end13
+  %call23 = call i32 @spec_fwrite(i8* %2, i32 1, i32 %call9, i32 %stream) #6
+  %.pre.pre = load i32, i32* %bzerr, align 4
+  br label %while.cond4
+
+if.end28:                                         ; preds = %while.cond4
+  call void @BZ2_bzReadGetUnused(i32* nonnull %bzerr, i8* %call196, i8** nonnull %unusedTmpV, i32* nonnull %nUnused) #6
+  %13 = load i32, i32* %bzerr, align 4
+  %cmp29 = icmp eq i32 %13, 0
+  br i1 %cmp29, label %if.end32, label %if.then31
+
+if.then31:                                        ; preds = %if.end28
+  call fastcc void @panic(i8* nonnull getelementptr inbounds ([27 x i8], [27 x i8]* @.str.5, i64 0, i64 0))
+  unreachable
+
+if.end32:                                         ; preds = %if.end28
+  %14 = load i8*, i8** %unusedTmpV, align 8
+  %15 = load i32, i32* %nUnused, align 4
+  %cmp33188 = icmp sgt i32 %15, 0
+  br i1 %cmp33188, label %for.body.preheader, label %for.end
+
+for.body.preheader:                               ; preds = %if.end32
+  %16 = sext i32 %15 to i64
+  %17 = sext i32 %15 to i64
+  %min.iters.check = icmp ult i32 %15, 16
+  br i1 %min.iters.check, label %for.body, label %min.iters.checked
+
+min.iters.checked:                                ; preds = %for.body.preheader
+  %n.vec = and i64 %17, -16
+  %cmp.zero = icmp eq i64 %n.vec, 0
+  br i1 %cmp.zero, label %for.body, label %vector.memcheck
+
+vector.memcheck:                                  ; preds = %min.iters.checked
+  %18 = sext i32 %15 to i64
+  %scevgep237 = getelementptr i8, i8* %scevgep, i64 %18
+  %scevgep238 = getelementptr i8, i8* %14, i64 -1
+  %scevgep239 = getelementptr i8, i8* %scevgep238, i64 %18
+  %bound0 = icmp ule i8* %unused236, %scevgep239
+  %bound1 = icmp ule i8* %14, %scevgep237
+  %memcheck.conflict = and i1 %bound0, %bound1
+  br i1 %memcheck.conflict, label %for.body, label %vector.body
+
+vector.body:                                      ; preds = %vector.memcheck, %vector.body
+  %index = phi i64 [ %index.next, %vector.body ], [ 0, %vector.memcheck ]
+  %19 = getelementptr inbounds i8, i8* %14, i64 %index
+  %20 = bitcast i8* %19 to <16 x i8>*
+  %wide.load = load <16 x i8>, <16 x i8>* %20, align 1
+  %21 = getelementptr inbounds [5000 x i8], [5000 x i8]* %unused, i64 0, i64 %index
+  %22 = bitcast i8* %21 to <16 x i8>*
+  store <16 x i8> %wide.load, <16 x i8>* %22, align 16
+  %index.next = add i64 %index, 16
+  %23 = icmp eq i64 %index.next, %n.vec
+  br i1 %23, label %middle.block, label %vector.body, !llvm.loop !1
+
+middle.block:                                     ; preds = %vector.body
+  %cmp.n = icmp eq i64 %17, %n.vec
+  br i1 %cmp.n, label %for.end, label %for.body
+
+for.body:                                         ; preds = %for.body.preheader, %min.iters.checked, %vector.memcheck, %middle.block, %for.body
+  %indvars.iv = phi i64 [ %indvars.iv.next, %for.body ], [ %n.vec, %middle.block ], [ 0, %for.body.preheader ], [ 0, %min.iters.checked ], [ 0, %vector.memcheck ]
+  %arrayidx = getelementptr inbounds i8, i8* %14, i64 %indvars.iv
+  %24 = load i8, i8* %arrayidx, align 1
+  %arrayidx36 = getelementptr inbounds [5000 x i8], [5000 x i8]* %unused, i64 0, i64 %indvars.iv
+  store i8 %24, i8* %arrayidx36, align 1
+  %indvars.iv.next = add nuw nsw i64 %indvars.iv, 1
+  %cmp33 = icmp slt i64 %indvars.iv.next, %16
+  br i1 %cmp33, label %for.body, label %for.end, !llvm.loop !4
+
+for.end:                                          ; preds = %for.body, %middle.block, %if.end32
+  call void @BZ2_bzReadClose(i32* nonnull %bzerr, i8* %call196) #6
+  %25 = load i32, i32* %bzerr, align 4
+  %cmp38 = icmp eq i32 %25, 0
+  br i1 %cmp38, label %if.end41, label %if.then40
+
+if.then40:                                        ; preds = %for.end
+  call fastcc void @panic(i8* nonnull getelementptr inbounds ([27 x i8], [27 x i8]* @.str.5, i64 0, i64 0))
+  unreachable
+
+if.end41:                                         ; preds = %for.end
+  %26 = load i32, i32* %nUnused, align 4
+  %cmp42 = icmp eq i32 %26, 0
+  br i1 %cmp42, label %land.lhs.true44, label %while.body.backedge
+
+while.body.backedge:                              ; preds = %if.end41, %myfeof.exit.thread
+  %27 = phi i32 [ %26, %if.end41 ], [ %.pre210, %myfeof.exit.thread ]
+  %28 = load i32, i32* @verbosity, align 4
+  %29 = load i8, i8* @smallMode, align 1
+  %conv = zext i8 %29 to i32
+  %call = call i8* @BZ2_bzReadOpen(i32* nonnull %bzerr, i32 %zStream, i32 %28, i32 %conv, i8* %3, i32 %27) #6
+  %cmp = icmp eq i8* %call, null
+  %30 = load i32, i32* %bzerr, align 4
+  %cmp2 = icmp ne i32 %30, 0
+  %or.cond = or i1 %cmp, %cmp2
+  br i1 %or.cond, label %errhandler, label %if.end
+
+land.lhs.true44:                                  ; preds = %if.end41
+  %call.i = call i32 @spec_getc(i32 %zStream) #6
+  %cmp.i = icmp eq i32 %call.i, -1
+  br i1 %cmp.i, label %if.end57, label %myfeof.exit.thread
+
+myfeof.exit.thread:                               ; preds = %land.lhs.true44
+  %conv.i = trunc i32 %call.i to i8
+  %call1.i = call i32 @spec_ungetc(i8 zeroext %conv.i, i32 %zStream) #6
+  %.pre210 = load i32, i32* %nUnused, align 4
+  br label %while.body.backedge
+
+if.end57:                                         ; preds = %land.lhs.true44, %while.body75.backedge, %if.then72
+  %cmp58 = icmp eq i32 %stream, 1
+  br i1 %cmp58, label %if.end65, label %if.then60
+
+if.then60:                                        ; preds = %if.end57
+  store i32 0, i32* @outputHandleJustInCase, align 4
+  br label %if.end65
+
+if.end65:                                         ; preds = %if.then60, %if.end57
+  store i32 0, i32* @outputHandleJustInCase, align 4
+  %31 = load i32, i32* @verbosity, align 4
+  %cmp66 = icmp sgt i32 %31, 1
+  br i1 %cmp66, label %if.then68, label %cleanup
+
+if.then68:                                        ; preds = %if.end65
+  %32 = load %struct._IO_FILE*, %struct._IO_FILE** @stderr, align 8
+  %33 = call i64 @fwrite(i8* nonnull getelementptr inbounds ([6 x i8], [6 x i8]* @.str.6, i64 0, i64 0), i64 5, i64 1, %struct._IO_FILE* %32) #7
+  br label %cleanup
+
+trycat:                                           ; preds = %while.body7
+  %34 = load i8, i8* @forceOverwrite, align 1
+  %tobool71 = icmp eq i8 %34, 0
+  br i1 %tobool71, label %errhandler, label %if.then72
+
+if.then72:                                        ; preds = %trycat
+  %call73 = call i32 @spec_rewind(i32 %zStream) #6
+  %call.i150185 = call i32 @spec_getc(i32 %zStream) #6
+  %cmp.i151186 = icmp eq i32 %call.i150185, -1
+  br i1 %cmp.i151186, label %if.end57, label %if.end79
+
+if.end79:                                         ; preds = %if.then72, %while.body75.backedge
+  %call.i150187 = phi i32 [ %call.i150, %while.body75.backedge ], [ %call.i150185, %if.then72 ]
+  %conv.i152 = trunc i32 %call.i150187 to i8
+  %call1.i153 = call i32 @spec_ungetc(i8 zeroext %conv.i152, i32 %zStream) #6
+  %call81 = call i32 @spec_fread(i8* %2, i32 1, i32 5000, i32 %zStream) #6
+  %cmp82 = icmp sgt i32 %call81, 0
+  br i1 %cmp82, label %if.then84, label %while.body75.backedge
+
+if.then84:                                        ; preds = %if.end79
+  %call86 = call i32 @spec_fwrite(i8* %2, i32 1, i32 %call81, i32 %stream) #6
+  br label %while.body75.backedge
+
+while.body75.backedge:                            ; preds = %if.then84, %if.end79
+  %call.i150 = call i32 @spec_getc(i32 %zStream) #6
+  %cmp.i151 = icmp eq i32 %call.i150, -1
+  br i1 %cmp.i151, label %if.end57, label %if.end79
+
+errhandler:                                       ; preds = %while.body.backedge, %while.cond4, %entry, %trycat
+  %call180 = phi i8* [ %call196, %trycat ], [ %call191, %entry ], [ %call196, %while.cond4 ], [ %call, %while.body.backedge ]
+  %streamNo.1 = phi i32 [ %inc, %trycat ], [ 0, %entry ], [ %inc, %while.cond4 ], [ %inc, %while.body.backedge ]
+  call void @BZ2_bzReadClose(i32* nonnull %bzerr_dummy, i8* %call180) #6
+  %35 = load i32, i32* %bzerr, align 4
+  switch i32 %35, label %sw.default [
+    i32 -9, label %sw.bb
+    i32 -6, label %errhandler_io
+    i32 -4, label %sw.bb91
+    i32 -3, label %sw.bb92
+    i32 -7, label %sw.bb93
+    i32 -5, label %sw.bb94
+  ]
+
+sw.bb:                                            ; preds = %errhandler
+  call fastcc void @configError()
+  unreachable
+
+errhandler_io:                                    ; preds = %errhandler
+  call fastcc void @ioError()
+  unreachable
+
+sw.bb91:                                          ; preds = %errhandler
+  %36 = load %struct._IO_FILE*, %struct._IO_FILE** @stderr, align 8
+  %37 = load i8*, i8** @progName, align 8
+  %call.i157 = call i32 (%struct._IO_FILE*, i8*, ...) @fprintf(%struct._IO_FILE* %36, i8* nonnull getelementptr inbounds ([47 x i8], [47 x i8]* @.str.12, i64 0, i64 0), i8* %37) #9
+  %38 = load i8, i8* @noisy, align 1
+  %tobool.i.i = icmp eq i8 %38, 0
+  br i1 %tobool.i.i, label %cadvise.exit.i, label %showFileNames.exit.i
+
+showFileNames.exit.i:                             ; preds = %sw.bb91
+  %39 = load %struct._IO_FILE*, %struct._IO_FILE** @stderr, align 8
+  %call.i.i = call i32 (%struct._IO_FILE*, i8*, ...) @fprintf(%struct._IO_FILE* %39, i8* nonnull getelementptr inbounds ([36 x i8], [36 x i8]* @.str.11, i64 0, i64 0), i8* nonnull getelementptr inbounds ([1034 x i8], [1034 x i8]* @inName, i64 0, i64 0), i8* nonnull getelementptr inbounds ([1034 x i8], [1034 x i8]* @outName, i64 0, i64 0)) #9
+  %.pr.i = load i8, i8* @noisy, align 1
+  %tobool.i1.i = icmp eq i8 %.pr.i, 0
+  br i1 %tobool.i1.i, label %cadvise.exit.i, label %if.then.i2.i
+
+if.then.i2.i:                                     ; preds = %showFileNames.exit.i
+  %40 = load %struct._IO_FILE*, %struct._IO_FILE** @stderr, align 8
+  %41 = call i64 @fwrite(i8* nonnull getelementptr inbounds ([241 x i8], [241 x i8]* @.str.13, i64 0, i64 0), i64 240, i64 1, %struct._IO_FILE* %40) #9
+  br label %cadvise.exit.i
+
+cadvise.exit.i:                                   ; preds = %if.then.i2.i, %showFileNames.exit.i, %sw.bb91
+  call fastcc void @cleanUpAndFail() #6
+  unreachable
+
+sw.bb92:                                          ; preds = %errhandler
+  call fastcc void @outOfMemory()
+  unreachable
+
+sw.bb93:                                          ; preds = %errhandler
+  %42 = load i8, i8* @noisy, align 1
+  %tobool.i = icmp eq i8 %42, 0
+  br i1 %tobool.i, label %if.end.i165, label %if.then.i
+
+if.then.i:                                        ; preds = %sw.bb93
+  %43 = load %struct._IO_FILE*, %struct._IO_FILE** @stderr, align 8
+  %44 = load i8*, i8** @progName, align 8
+  %call.i158 = call i32 (%struct._IO_FILE*, i8*, ...) @fprintf(%struct._IO_FILE* %43, i8* nonnull getelementptr inbounds ([95 x i8], [95 x i8]* @.str.14, i64 0, i64 0), i8* %44) #9
+  %45 = load i8*, i8** @progName, align 8
+  call void @perror(i8* %45) #9
+  %46 = load i8, i8* @noisy, align 1
+  %tobool.i.i159 = icmp eq i8 %46, 0
+  br i1 %tobool.i.i159, label %if.end.i165, label %showFileNames.exit.i163
+
+showFileNames.exit.i163:                          ; preds = %if.then.i
+  %47 = load %struct._IO_FILE*, %struct._IO_FILE** @stderr, align 8
+  %call.i.i160 = call i32 (%struct._IO_FILE*, i8*, ...) @fprintf(%struct._IO_FILE* %47, i8* nonnull getelementptr inbounds ([36 x i8], [36 x i8]* @.str.11, i64 0, i64 0), i8* nonnull getelementptr inbounds ([1034 x i8], [1034 x i8]* @inName, i64 0, i64 0), i8* nonnull getelementptr inbounds ([1034 x i8], [1034 x i8]* @outName, i64 0, i64 0)) #9
+  %.pr.i161 = load i8, i8* @noisy, align 1
+  %tobool.i1.i162 = icmp eq i8 %.pr.i161, 0
+  br i1 %tobool.i1.i162, label %if.end.i165, label %if.then.i2.i164
+
+if.then.i2.i164:                                  ; preds = %showFileNames.exit.i163
+  %48 = load %struct._IO_FILE*, %struct._IO_FILE** @stderr, align 8
+  %49 = call i64 @fwrite(i8* nonnull getelementptr inbounds ([241 x i8], [241 x i8]* @.str.13, i64 0, i64 0), i64 240, i64 1, %struct._IO_FILE* %48) #9
+  br label %if.end.i165
+
+if.end.i165:                                      ; preds = %if.then.i2.i164, %showFileNames.exit.i163, %if.then.i, %sw.bb93
+  call fastcc void @cleanUpAndFail() #6
+  unreachable
+
+sw.bb94:                                          ; preds = %errhandler
+  %cmp103 = icmp eq i32 %streamNo.1, 1
+  br i1 %cmp103, label %cleanup, label %if.else
+
+if.else:                                          ; preds = %sw.bb94
+  %50 = load i8, i8* @noisy, align 1
+  %tobool106 = icmp eq i8 %50, 0
+  br i1 %tobool106, label %cleanup, label %if.then107
+
+if.then107:                                       ; preds = %if.else
+  %51 = load %struct._IO_FILE*, %struct._IO_FILE** @stderr, align 8
+  %52 = load i8*, i8** @progName, align 8
+  %call108 = call i32 (%struct._IO_FILE*, i8*, ...) @fprintf(%struct._IO_FILE* %51, i8* nonnull getelementptr inbounds ([45 x i8], [45 x i8]* @.str.7, i64 0, i64 0), i8* %52, i8* nonnull getelementptr inbounds ([1034 x i8], [1034 x i8]* @inName, i64 0, i64 0)) #7
+  br label %cleanup
+
+sw.default:                                       ; preds = %errhandler
+  call fastcc void @panic(i8* nonnull getelementptr inbounds ([28 x i8], [28 x i8]* @.str.8, i64 0, i64 0))
+  unreachable
+
+cleanup:                                          ; preds = %if.then107, %if.else, %sw.bb94, %if.end65, %if.then68
+  %retval.0 = phi i8 [ 1, %if.then68 ], [ 1, %if.end65 ], [ 0, %sw.bb94 ], [ 1, %if.else ], [ 1, %if.then107 ]
+  call void @llvm.lifetime.end(i64 8, i8* %5) #6
+  call void @llvm.lifetime.end(i64 4, i8* %4) #6
+  call void @llvm.lifetime.end(i64 5000, i8* %3) #6
+  call void @llvm.lifetime.end(i64 5000, i8* %2) #6
+  call void @llvm.lifetime.end(i64 4, i8* %1) #6
+  call void @llvm.lifetime.end(i64 4, i8* %0) #6
+  ret i8 %retval.0
+}
+
+declare i8* @BZ2_bzReadOpen(i32*, i32, i32, i32, i8*, i32) #2
+
+declare i32 @BZ2_bzRead(i32*, i8*, i8*, i32) #2
+
+declare i32 @spec_fwrite(i8*, i32, i32, i32) #2
+
+declare void @BZ2_bzReadGetUnused(i32*, i8*, i8**, i32*) #2
+
+declare void @BZ2_bzReadClose(i32*, i8*) #2
+
+declare i32 @spec_rewind(i32) #2
+
+declare i32 @spec_getc(i32) #2
+
+declare i32 @spec_ungetc(i8 zeroext, i32) #2
+
+; Function Attrs: noreturn nounwind uwtable
+define internal fastcc void @cleanUpAndFail() unnamed_addr #4 {
+entry:
+  store i32 0, i32* @exitValue, align 4
+  tail call void @exit(i32 0) #8
+  unreachable
+}
+
+; Function Attrs: noreturn nounwind
+declare void @exit(i32) #5
+
+; Function Attrs: nounwind
+declare void @perror(i8* nocapture readonly) #3
+
+; Function Attrs: nounwind
+declare i64 @fwrite(i8* nocapture, i64, i64, %struct._IO_FILE* nocapture) #6
+
+; Function Attrs: nounwind
+declare i32 @fputc(i32, %struct._IO_FILE* nocapture) #6
+
+attributes #0 = { nounwind uwtable "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+fxsr,+mmx,+sse,+sse2" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #1 = { argmemonly nounwind }
+attributes #2 = { "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+fxsr,+mmx,+sse,+sse2" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #3 = { nounwind "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+fxsr,+mmx,+sse,+sse2" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #4 = { noreturn nounwind uwtable "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+fxsr,+mmx,+sse,+sse2" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #5 = { noreturn nounwind "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+fxsr,+mmx,+sse,+sse2" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #6 = { nounwind }
+attributes #7 = { cold }
+attributes #8 = { noreturn nounwind }
+attributes #9 = { cold nounwind }
+
+!llvm.ident = !{!0}
+
+!0 = !{!"clang version 3.8.0 (tags/RELEASE_380/final)"}
+!1 = distinct !{!1, !2, !3}
+!2 = !{!"llvm.loop.vectorize.width", i32 1}
+!3 = !{!"llvm.loop.interleave.count", i32 1}
+!4 = distinct !{!4, !2, !3}

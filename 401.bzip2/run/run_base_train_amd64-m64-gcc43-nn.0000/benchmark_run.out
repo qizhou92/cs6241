@@ -1,0 +1,10 @@
+timer ticks over every 1000 ns
+# Starting run for copy #0
+cd /home/girish/Developement/llvm3.8.0/Workloads/spec2006/benchspec/CPU2006/401.bzip2/run/run_base_train_amd64-m64-gcc43-nn.0000
+../run_base_train_amd64-m64-gcc43-nn.0000/bzip2_base.amd64-m64-gcc43-nn input.program 10 > input.program.out 2>> input.program.err
+# Starting run for copy #0
+cd /home/girish/Developement/llvm3.8.0/Workloads/spec2006/benchspec/CPU2006/401.bzip2/run/run_base_train_amd64-m64-gcc43-nn.0000
+../run_base_train_amd64-m64-gcc43-nn.0000/bzip2_base.amd64-m64-gcc43-nn byoudoin.jpg 5 > byoudoin.jpg.out 2>> byoudoin.jpg.err
+# Starting run for copy #0
+cd /home/girish/Developement/llvm3.8.0/Workloads/spec2006/benchspec/CPU2006/401.bzip2/run/run_base_train_amd64-m64-gcc43-nn.0000
+../run_base_train_amd64-m64-gcc43-nn.0000/bzip2_base.amd64-m64-gcc43-nn input.combined 80 > input.combined.out 2>> input.combined.err

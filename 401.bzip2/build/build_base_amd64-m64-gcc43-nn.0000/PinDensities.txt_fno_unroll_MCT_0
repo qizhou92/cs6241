@@ -1,0 +1,540 @@
+function spec_init Loop for.body
+RD = 0.800000
+Reuse = 760.000000
+Denominator = 950.000000
+SubLoopSize = 1
+function spec_random_load Loop for.body26
+RD = 0.384615
+Reuse = 100.000000
+Denominator = 260.000000
+SubLoopSize = 0
+function spec_load Loop while.body
+RD = 2.857143
+Reuse = 600.000000
+Denominator = 210.000000
+SubLoopSize = 0
+function spec_load Loop for.body
+RD = 1.875000
+Reuse = 300.000000
+Denominator = 160.000000
+SubLoopSize = 0
+function main Loop for.body42
+RD = 4.093264
+Reuse = 7900.000000
+Denominator = 1930.000000
+SubLoopSize = 1
+function BZ2_blockSort Loop for.body280.i
+RD = 0.000035
+Reuse = 14300.000000
+Denominator = 413343140.000000
+SubLoopSize = 7
+function BZ2_blockSort Loop for.body102.i
+RD = 0.111111
+Reuse = 10.000000
+Denominator = 90.000000
+SubLoopSize = 0
+function fallbackSort Loop while.body
+RD = 0.000028
+Reuse = 2100.000000
+Denominator = 75571980.000000
+SubLoopSize = 2
+function fallbackSort Loop for.body25
+RD = 0.111111
+Reuse = 10.000000
+Denominator = 90.000000
+SubLoopSize = 0
+function compressStream Loop do.body.i124
+RD = 0.179039
+Reuse = 410.000000
+Denominator = 2290.000000
+SubLoopSize = 2
+function compressStream Loop do.body.i
+RD = 0.179039
+Reuse = 410.000000
+Denominator = 2290.000000
+SubLoopSize = 2
+function BZ2_bzCompress Loop preswitch
+RD = 1.111111
+Reuse = 100.000000
+Denominator = 90.000000
+SubLoopSize = 0
+function handle_compress Loop while.body.outer
+RD = 13.753292
+Reuse = 313300.000000
+Denominator = 22780.000000
+SubLoopSize = 3
+function BZ2_bzDecompress Loop while.body.outer
+RD = 5.893176
+Reuse = 1354900.000000
+Denominator = 229910.000000
+SubLoopSize = 5
+function BZ2_bzWriteClose64 Loop while.body
+RD = 0.272727
+Reuse = 300.000000
+Denominator = 1100.000000
+SubLoopSize = 1
+function BZ2_bzBuffToBuffCompress Loop preswitch.i
+RD = 1.666667
+Reuse = 100.000000
+Denominator = 60.000000
+SubLoopSize = 0
+function BZ2_compressBlock Loop while.body.i
+RD = 4.761905
+Reuse = 1000.000000
+Denominator = 210.000000
+SubLoopSize = 0
+function BZ2_compressBlock Loop while.body.i.i107
+RD = 4.761905
+Reuse = 1000.000000
+Denominator = 210.000000
+SubLoopSize = 0
+function BZ2_compressBlock Loop while.body.i.i132
+RD = 4.761905
+Reuse = 1000.000000
+Denominator = 210.000000
+SubLoopSize = 0
+function BZ2_compressBlock Loop while.body.i.i157
+RD = 4.761905
+Reuse = 1000.000000
+Denominator = 210.000000
+SubLoopSize = 0
+function BZ2_compressBlock Loop while.body.i.i182
+RD = 4.761905
+Reuse = 1000.000000
+Denominator = 210.000000
+SubLoopSize = 0
+function BZ2_compressBlock Loop while.body.i.i207
+RD = 4.761905
+Reuse = 1000.000000
+Denominator = 210.000000
+SubLoopSize = 0
+function BZ2_compressBlock Loop while.body.i.i232
+RD = 4.761905
+Reuse = 1000.000000
+Denominator = 210.000000
+SubLoopSize = 0
+function BZ2_compressBlock Loop if.end1976.i
+RD = 38.500862
+Reuse = 5579930.000000
+Denominator = 144930.000000
+SubLoopSize = 51
+function BZ2_compressBlock Loop for.body1920.i
+RD = 2.251409
+Reuse = 1134350.000000
+Denominator = 503840.000000
+SubLoopSize = 2
+function BZ2_compressBlock Loop for.cond1894.preheader.i
+RD = 2.574752
+Reuse = 67510.000000
+Denominator = 26220.000000
+SubLoopSize = 2
+function BZ2_compressBlock Loop while.body.i1636
+RD = 4.761905
+Reuse = 1000.000000
+Denominator = 210.000000
+SubLoopSize = 0
+function BZ2_compressBlock Loop while.body.i1662
+RD = 4.761905
+Reuse = 1000.000000
+Denominator = 210.000000
+SubLoopSize = 0
+function BZ2_compressBlock Loop for.body1856.i
+RD = 2.414461
+Reuse = 112200.000000
+Denominator = 46470.000000
+SubLoopSize = 1
+function BZ2_compressBlock Loop for.body1843.i
+RD = 4.017279
+Reuse = 18600.000000
+Denominator = 4630.000000
+SubLoopSize = 2
+function BZ2_compressBlock Loop for.body1819.i
+RD = 0.093220
+Reuse = 110.000000
+Denominator = 1180.000000
+SubLoopSize = 1
+function BZ2_compressBlock Loop for.body1729.i
+RD = 0.536082
+Reuse = 520.000000
+Denominator = 970.000000
+SubLoopSize = 1
+function BZ2_compressBlock Loop for.cond104.preheader.i
+RD = 0.157255
+Reuse = 42190.000000
+Denominator = 268290.000000
+SubLoopSize = 5
+function BZ2_compressBlock Loop while.body.i241
+RD = 0.022727
+Reuse = 100.000000
+Denominator = 4400.000000
+SubLoopSize = 3
+function BZ2_compressBlock Loop while.body91.i
+RD = 2.541667
+Reuse = 610.000000
+Denominator = 240.000000
+SubLoopSize = 0
+function BZ2_compressBlock Loop for.body16.i
+RD = 1.731383
+Reuse = 6510.000000
+Denominator = 3760.000000
+SubLoopSize = 2
+function BZ2_compressBlock Loop for.body.i.i
+RD = 0.647059
+Reuse = 110.000000
+Denominator = 170.000000
+SubLoopSize = 0
+function BZ2_compressBlock Loop while.body.i1816
+RD = 4.761905
+Reuse = 1000.000000
+Denominator = 210.000000
+SubLoopSize = 0
+function BZ2_compressBlock Loop while.body.i1406
+RD = 4.761905
+Reuse = 1000.000000
+Denominator = 210.000000
+SubLoopSize = 0
+function BZ2_compressBlock Loop while.body.i.i497
+RD = 4.761905
+Reuse = 1000.000000
+Denominator = 210.000000
+SubLoopSize = 0
+function BZ2_compressBlock Loop while.body.i.i471
+RD = 4.761905
+Reuse = 1000.000000
+Denominator = 210.000000
+SubLoopSize = 0
+function BZ2_compressBlock Loop while.body.i.i445
+RD = 4.761905
+Reuse = 1000.000000
+Denominator = 210.000000
+SubLoopSize = 0
+function BZ2_compressBlock Loop while.body.i.i419
+RD = 4.761905
+Reuse = 1000.000000
+Denominator = 210.000000
+SubLoopSize = 0
+function BZ2_compressBlock Loop while.body.i.i393
+RD = 4.761905
+Reuse = 1000.000000
+Denominator = 210.000000
+SubLoopSize = 0
+function BZ2_compressBlock Loop while.body.i.i367
+RD = 4.761905
+Reuse = 1000.000000
+Denominator = 210.000000
+SubLoopSize = 0
+function BZ2_compressBlock Loop while.body.i.i341
+RD = 4.761905
+Reuse = 1000.000000
+Denominator = 210.000000
+SubLoopSize = 0
+function BZ2_compressBlock Loop while.body.i.i314
+RD = 4.761905
+Reuse = 1000.000000
+Denominator = 210.000000
+SubLoopSize = 0
+function BZ2_compressBlock Loop while.body.i.i288.while.body.i.i288_crit_edge
+RD = 4.761905
+Reuse = 1000.000000
+Denominator = 210.000000
+SubLoopSize = 0
+function bsPutUInt32 Loop while.body.i37
+RD = 4.761905
+Reuse = 1000.000000
+Denominator = 210.000000
+SubLoopSize = 0
+function bsPutUInt32 Loop while.body.i62
+RD = 4.761905
+Reuse = 1000.000000
+Denominator = 210.000000
+SubLoopSize = 0
+function bsPutUInt32 Loop while.body.i87
+RD = 4.761905
+Reuse = 1000.000000
+Denominator = 210.000000
+SubLoopSize = 0
+function bsPutUInt32 Loop while.body.i
+RD = 4.761905
+Reuse = 1000.000000
+Denominator = 210.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end3447
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end3389
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end3331
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end3273
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end3215
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end3157
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end3099
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end3041
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end2983
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end1112
+RD = 4.772727
+Reuse = 2100.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end1196
+RD = 4.772727
+Reuse = 2100.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop sw.bb1373
+RD = 2.969432
+Reuse = 13600.000000
+Denominator = 4580.000000
+SubLoopSize = 1
+function BZ2_decompress Loop if.end1627
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end1569
+RD = 4.772727
+Reuse = 2100.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end1503
+RD = 4.772727
+Reuse = 2100.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end1895
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop do.body2732
+RD = 1.304348
+Reuse = 600.000000
+Denominator = 460.000000
+SubLoopSize = 0
+function BZ2_decompress Loop for.body2657
+RD = 0.243902
+Reuse = 100.000000
+Denominator = 410.000000
+SubLoopSize = 0
+function BZ2_decompress Loop for.body2645
+RD = 0.125000
+Reuse = 10.000000
+Denominator = 80.000000
+SubLoopSize = 0
+function BZ2_decompress Loop for.body2600
+RD = 0.111111
+Reuse = 10.000000
+Denominator = 90.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end2090
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end2025
+RD = 4.772727
+Reuse = 2100.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end2516
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end2451
+RD = 4.772727
+Reuse = 2100.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop while.body2264
+RD = 0.076923
+Reuse = 10.000000
+Denominator = 130.000000
+SubLoopSize = 0
+function BZ2_decompress Loop while.body2225
+RD = 1.629630
+Reuse = 440.000000
+Denominator = 270.000000
+SubLoopSize = 0
+function BZ2_decompress Loop for.cond2349.preheader
+RD = 0.078014
+Reuse = 110.000000
+Denominator = 1410.000000
+SubLoopSize = 1
+function BZ2_decompress Loop while.body2310.while.body2310_crit_edge
+RD = 0.055556
+Reuse = 10.000000
+Denominator = 180.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end1830
+RD = 4.772727
+Reuse = 2100.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop for.body1457
+RD = 0.009346
+Reuse = 10.000000
+Denominator = 1070.000000
+SubLoopSize = 1
+function BZ2_decompress Loop if.end1328
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end1270
+RD = 4.772727
+Reuse = 2100.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop for.body.i
+RD = 0.555556
+Reuse = 100.000000
+Denominator = 180.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end1040
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end983
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end926
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end874
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end817
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end760
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end703
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end646
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end582
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end525
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end468
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end411
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end354
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end292
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end192
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end136
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end79
+RD = 2.272727
+Reuse = 1000.000000
+Denominator = 440.000000
+SubLoopSize = 0
+function BZ2_decompress Loop if.end38
+RD = 4.666667
+Reuse = 2100.000000
+Denominator = 450.000000
+SubLoopSize = 0
+function BZ2_hbMakeCodeLengths Loop for.body11
+RD = 0.075491
+Reuse = 8230.000000
+Denominator = 109020.000000
+SubLoopSize = 5
+function BZ2_hbAssignCodes Loop for.cond1.preheader
+RD = 0.117647
+Reuse = 200.000000
+Denominator = 1700.000000
+SubLoopSize = 1
+function BZ2_hbCreateDecodeTables Loop for.body76
+RD = 0.076923
+Reuse = 10.000000
+Denominator = 130.000000
+SubLoopSize = 0
+function BZ2_hbCreateDecodeTables Loop for.body37
+RD = 0.111111
+Reuse = 10.000000
+Denominator = 90.000000
+SubLoopSize = 0
+function BZ2_hbCreateDecodeTables Loop for.cond1.preheader
+RD = 0.052910
+Reuse = 100.000000
+Denominator = 1890.000000
+SubLoopSize = 1
