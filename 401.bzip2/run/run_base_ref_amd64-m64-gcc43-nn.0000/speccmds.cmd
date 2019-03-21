@@ -1,7 +1,0 @@
--C /nethome/girish/Developement/llvm3.8.0/Workloads/spec2006/benchspec/CPU2006/401.bzip2/run/run_base_ref_amd64-m64-gcc43-nn.0000
--o input.source.out -e input.source.err ../run_base_ref_amd64-m64-gcc43-nn.0000/bzip2_base.amd64-m64-gcc43-nn input.source 280
--o chicken.jpg.out -e chicken.jpg.err ../run_base_ref_amd64-m64-gcc43-nn.0000/bzip2_base.amd64-m64-gcc43-nn chicken.jpg 30
--o liberty.jpg.out -e liberty.jpg.err ../run_base_ref_amd64-m64-gcc43-nn.0000/bzip2_base.amd64-m64-gcc43-nn liberty.jpg 30
--o input.program.out -e input.program.err ../run_base_ref_amd64-m64-gcc43-nn.0000/bzip2_base.amd64-m64-gcc43-nn input.program 280
--o text.html.out -e text.html.err ../run_base_ref_amd64-m64-gcc43-nn.0000/bzip2_base.amd64-m64-gcc43-nn text.html 280
--o input.combined.out -e input.combined.err ../run_base_ref_amd64-m64-gcc43-nn.0000/bzip2_base.amd64-m64-gcc43-nn input.combined 200

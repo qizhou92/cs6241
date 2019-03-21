@@ -1,4 +1,0 @@
--C /home/girish/Developement/llvm3.8.0/Workloads/spec2006/benchspec/CPU2006/401.bzip2/run/run_base_train_amd64-m64-gcc43-nn.0000
--o input.program.out -e input.program.err ../run_base_train_amd64-m64-gcc43-nn.0000/bzip2_base.amd64-m64-gcc43-nn input.program 10
--o byoudoin.jpg.out -e byoudoin.jpg.err ../run_base_train_amd64-m64-gcc43-nn.0000/bzip2_base.amd64-m64-gcc43-nn byoudoin.jpg 5
--o input.combined.out -e input.combined.err ../run_base_train_amd64-m64-gcc43-nn.0000/bzip2_base.amd64-m64-gcc43-nn input.combined 80

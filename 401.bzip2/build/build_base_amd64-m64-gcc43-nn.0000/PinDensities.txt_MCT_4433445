@@ -1,5 +1,0 @@
-function BZ2_compressBlock Loop if.end1976.i
-RD = 38.500862
-Reuse = 5579930.000000
-Denominator = 144930.000000
-SubLoopSize = 51
