@@ -5,7 +5,7 @@ There are 6 simple benchmark in the simpleBenchmark folder.\
 -mem2reg.ll are ssa IR files
 you can choose either one to work with.
 
-The real benchmark is a compress program from SPEC2000, which is in the src folder.
+The real benchmark is a compress program from SPEC2006, which is in the src folder.
 After you finish your implementation of the project, you need to modify the Makefile to run your pass in the building stage. 
 After you build bzip2, you will using bzip2 on two files which located in testData folder.
 You will first compress these two files by running the following commands under src folder
