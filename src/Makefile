@@ -14,8 +14,10 @@ all:$(EXE)
 
 $(EXE): $(OBJ)
 	$(LD) -o $(EXE)_link.bc $(OBJ)
-#opt -load myPass.so -myPassName <$(EXE)_link.bc > $(EXE)_mypass.bc
-	opt -O3 <$(EXE)_link.bc > $(EXE)_O3.bc
+	opt -mem2reg <$(EXE)_link.bc > $(EXE)_ssa.bc
+	# change LLVMHELLO.dylib to your library, and -hello to your pass name
+	opt -load LLVMHELLO.dylib -hello <$(EXE)_ssa.bc > $(EXE)_mypass.bc
+	opt -O3 <$(EXE)_mypass.bc > $(EXE)_O3.bc
 	llc -o $(EXE).s $(EXE)_O3.bc
 	$(CC) -o $@ $(EXE).s
 
