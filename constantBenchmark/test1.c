@@ -2,11 +2,11 @@ int f(int a){
  a = 10;
  int b = a + 5;
  int x;
- x = a - 3;
  if (b < 5){
-   x =  a+1;
+   x =  10;
  }else{
- 	x = x+3;
+   x = 8;
  }
- return x;
+ int y = x+2;
+ return y;
 }

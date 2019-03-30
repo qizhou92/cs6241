@@ -1,12 +1,12 @@
 int f(int a){
- a = 10;
  int b = a + 5;
  int x;
  x = a - 3;
  if (b < 5){
-   x =  a+1;
+   x =  5;
  }else{
- 	x = x+3;
+ 	x = 10;
  }
- return x;
+ int y=x+10;
+ return y;
 }
